@@ -18,7 +18,7 @@ app.use('/api/providers', require('./src/routes/provider.routes'));
 app.use('/api/payments',  require('./src/routes/payment.routes'));
 app.use('/api/admin',     require('./src/routes/admin.routes'));
 app.use('/api/reviews',   require('./src/routes/review.routes'));
-
+app.use('/api/providers', require('./src/routes/provider.onboard.routes'));
 // Health check
 app.get('/', (req, res) => {
   res.json({ message: '🏘️ Neighborhood Service Finder API is running!' });
