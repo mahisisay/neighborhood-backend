@@ -80,7 +80,7 @@ async function initiatePayment(req, res) {
         callback_url: `${APP_URL}/api/payments/chapa-callback`,
         return_url:   `${APP_URL}/api/payments/success?tx_ref=${txRef}`,
         customization: {
-          title:       'Neighborhood Service Finder',
+          title: 'NSF Payment',
           description: payer_role === 'seeker'
             ? 'Commitment fee - unlock provider contact'
             : 'Service fee - unlock seeker contact'
