@@ -1,5 +1,5 @@
 // =============================================
-//  server.js — Final Version
+//  server.js — CLEAN PRODUCTION VERSION
 // =============================================
 
 const express = require('express');
@@ -25,7 +25,11 @@ app.get('/', (req, res) => {
   res.json({ message: '🏘️ Neighborhood Service Finder API is running!' });
 });
 
-// TEMPORARY — update categories once then remove!
+// =============================================
+// ⚠️ MIGRATION ROUTE - KEEP FOR NOW (will remove after confirming categories work)
+// Access once at: https://your-backend.railway.app/migrate-categories
+// Then DELETE this entire block
+// =============================================
 app.get('/migrate-categories', async (req, res) => {
   const db = require('./src/config/db');
   try {
@@ -42,16 +46,43 @@ app.get('/migrate-categories', async (req, res) => {
     await db.query('SET FOREIGN_KEY_CHECKS = 1');
     res.json({ message: '✅ Categories updated successfully!' });
   } catch(err) {
-    res.json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// 404 — must be last!
+// =============================================
+// TEST ROUTE - Check if server is working
+// =============================================
+app.get('/test', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// 404 handler — MUST BE LAST!
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+  res.status(404).json({ 
+    message: 'Route not found',
+    requestedUrl: req.originalUrl 
+  });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ 
+    message: 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📱 Test URLs:`);
+  console.log(`   - Health: http://localhost:${PORT}/`);
+  console.log(`   - Test:   http://localhost:${PORT}/test`);
+  console.log(`   - Categories: http://localhost:${PORT}/migrate-categories`);
 });
